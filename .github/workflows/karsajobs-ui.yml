@@ -1,0 +1,29 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Karsajobs-ui CI
+
+on:
+  push:
+    branches: [ "karsajobs-ui" ]
+  pull_request:
+    branches: [ "karsajobs-ui" ]
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+        
+    - name: lint-dockerfile
+      run: |
+        sudo apt update && sudo apt install shellcheck -y
+        sudo wget -O /usr/local/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+        sudo chmod u+x /usr/local/bin/hadolint
+        hadolint Dockerfile
+        
+    - name: build-app-karsajobs-ui
+      uses: macbre/push-to-ghcr@master
+      with:
+        image_name: kangagung/karsajobs-ui
+        github_token: ${{ secrets.GITHUB_TOKEN }}
